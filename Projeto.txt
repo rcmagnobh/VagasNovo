@@ -1,0 +1,107 @@
+Preciso criar um programa em python aonde fara busca de vagas na internet
+
+criterios:
+
+* Banco Local
+* Linguagem de programação em python
+
+Criar tela de parametro
+Nesta tela vai ter dados de usuario e senha para envio de email, porta, pop
+
+
+Tela de cadastro Vagas:
+ ID, Título, Empresa, Link Original, Descrição, Data de Publicação, Data de Captura, Status, Obs (caso tenha nome do recrutador, whatsapp, algum outro dado relevante) 
+(Ex: Pendente, Candidatado, Rejeitado, Entrevista).
+
+ter um campo para fazer a busca
+Palavras_Chave: Termos que o seu robô deve buscar (Ex: "Desenvolvedor", "Remoto", "Delphi", "C#").
+
+criar um log
+Historico_Buscas: Logs para você saber quando o robô rodou e quantas vagas novas ele encontrou.
+
+* coleta de dados (scraping)
+
+Como funcionaria a estrutura:
+Interface e Gráficos (Streamlit): O Streamlit permite que você crie um dashboard lindíssimo com pouquíssimas linhas de código Python. Ele já possui integração nativa com bibliotecas de gráficos como Plotly, Altair ou Matplotlib. Você consegue criar filtros de busca, gráficos de status e tabelas interativas num piscar de olhos.
+
+Interface Avançada (Dash por Plotly): Se quiser algo mais customizado, com estilo de sistema corporativo e arrastar-e-soltar avançado, o Dash é uma alternativa em Python baseada em React, excelente para dashboards complexos.
+
+O Robô (Scraper): Um script Python separado (usando Playwright ou BeautifulSoup) roda via agendador de tarefas do Windows (ou um loop interno) alimentando o arquivo local do SQLite. O Streamlit lê esse arquivo e atualiza os gráficos na tela.
+
+
+Funil de Candidaturas (Gráfico de Rosca ou Barra): Quantidade de vagas em cada estágio: Capturadas $\rightarrow$ Interessado $\rightarrow$ Candidatado $\rightarrow$ Em Entrevista $\rightarrow$ Proposta / Recusado.Quadro Kanban: Cartões visuais das vagas que você pode mover entre as colunas de status.Gráfico de Linha (Evolução Diária): Quantas vagas novas o seu robô está encontrando por dia para identificar tendências do mercado.Filtros Rápidos: Tecnologia (ex: C#, Python, Delphi), Modelo (Remoto/Híbrido) e Nível (Pleno/Sênior).
+
+
+sugestão de fluxo e bibliotecas a serem utilizadas
+
+🛠️ O Arsenal de Bibliotecas
+Para esse ecossistema, dividiremos as bibliotecas por função:
+
+Interface e Gráficos: streamlit (para rodar o dashboard) e plotly (para gráficos interativos e bonitos).
+
+Web Scraping (Coleta): * requests + beautifulsoup4 (para sites simples/estáticos que carregam rápido).
+
+playwright ou selenium (essencial para portais de vagas modernos que usam muito JavaScript ou precisam de clique/rolagem para carregar mais vagas).
+
+Banco de Dados: sqlite3 (nativo do Python, excelente para o ambiente local) ou sqlalchemy (se quiser usar uma camada de abstração/ORM).
+
+Manipulação de Dados: pandas (fundamental para limpar os dados coletados antes de salvar).
+
+🔄 Fluxo Lógico e Passo a Passo
+O sistema vai operar em três etapas principais que rodam de forma independente, mas compartilham o mesmo banco de dados local.
+
+[ Robô de Scraping ] ──(Salva/Atualiza)──> [ Banco SQLite ] <──(Lê e Exibe)── [ Painel Streamlit ]
+Passo 1: Estrutura do Banco de Dados (O alicerce)
+Antes de coletar, você precisa de um lugar para guardar. Crie um script inicial para estruturar seu banco SQLite (vagas.db).
+
+Tabela vagas: * id (Chave primária)
+
+titulo, empresa, localizacao, link (Use o link como chave única para evitar duplicatas)
+
+descricao (Texto completo da vaga para futuras buscas)
+
+data_coleta (Data de hoje)
+
+status (Padrão: 'Pendente'. Outros: 'Candidatado', 'Entrevista', 'Reprovado')
+
+palavra_chave (Qual termo originou essa busca)
+
+Passo 2: O Robô de Captura (Scraper)
+Esse script vai rodar em segundo plano (ou disparado por um botão no painel). A lógica dele deve ser:
+
+Acessar a URL do site de vagas alvo filtrando pelo termo desejado (ex: "Desenvolvedor").
+
+Mapear o HTML: Identificar onde estão os cards de vagas.
+
+Iterar e Coletar: Para cada card, extrair o título, empresa, link e descrição.
+
+Tratamento de Dados (Pandas): Alimentar um DataFrame, remover duplicatas que vieram do próprio site e formatar os textos.
+
+Persistência Inteligente: Tentar inserir no banco local.
+
+Dica de Ouro: Use a instrução INSERT OR IGNORE no SQLite baseada no link da vaga. Assim, se o robô achar a mesma vaga amanhã, o banco simplesmente ignora e não duplica seu painel.
+
+Passo 3: O Dashboard Visual (Streamlit)
+O arquivo app.py será o seu painel de controle. O Streamlit roda lendo o banco de dados e renderizando a tela de cima para baixo.
+
+Leitura do Banco: O Streamlit faz uma query SELECT * FROM vagas e joga direto em um DataFrame do Pandas.
+
+Métricas de Topo (Cards): Exibir no topo da tela indicadores rápidos usando st.metric():
+
+📊 Total de Vagas Capturadas
+
+⏳ Pendentes de Análise
+
+🚀 Candidaturas Enviadas
+
+Exibição Gráfica (Plotly):
+
+Criar um gráfico de pizza/rosca mostrando a distribuição por status.
+
+Criar um gráfico de barras verticais mostrando quais palavras_chave estão trazendo mais vagas.
+
+Gerenciamento de Status (Ação do Usuário):
+
+Exibir uma tabela interativa (st.dataframe ou st.data_editor) com as vagas "Pendentes".
+
+Colocar um formulário simples: o usuário seleciona a vaga em um combo box, altera o status para "Candidatado" e clica em "Atualizar". O Streamlit executa um UPDATE no banco e recarrega a tela atualizando os gráficos na hora.

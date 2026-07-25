@@ -1,0 +1,49 @@
+GESTAO DE VAGAS - PACOTE DE DISTRIBUICAO
+========================================
+
+COMO INSTALAR EM OUTRO COMPUTADOR
+---------------------------------
+1. Copie a pasta INTEIRA "distribuicao" para o outro PC
+2. Nao mova apenas o GestaoVagas.exe - a pasta _internal e obrigatoria
+3. Pode colocar em qualquer lugar (Desktop, C:\GestaoVagas, etc.)
+
+COMO USAR
+---------
+1. Execute o arquivo: Iniciar Gestao de Vagas.bat
+   (NAO clique direto no GestaoVagas.exe)
+2. Aguarde abrir o navegador em http://localhost:8501
+3. Mantenha a janela preta aberta enquanto usa o sistema
+4. Para encerrar, feche a janela preta
+
+BANCO DE DADOS
+--------------
+- O arquivo vagas.db fica nesta mesma pasta
+- Se nao existir, e criado automaticamente na primeira execucao
+- Para backup, copie o arquivo vagas.db
+- Para migrar dados, substitua o vagas.db nesta pasta
+
+CONTEUDO OBRIGATORIO DA PASTA
+------------------------------
+- Iniciar Gestao de Vagas.bat  (atalho principal)
+- GestaoVagas.exe
+- _internal\                     (bibliotecas - obrigatorio)
+- ms-playwright\                 (navegador Chromium - obrigatorio para busca completa)
+- LEIA-ME.txt
+
+PROBLEMAS COMUNS
+----------------
+- Tela pisca e fecha: use o arquivo .bat, nao o .exe direto
+- Erro "_validators.json not found": a pasta _internal foi copiada incompleta.
+  Solucao: extraia/copie de novo a pasta distribuicao INTEIRA (ZIP completo).
+  Confira se existe: _internal\plotly\validators\_validators.json (~3,6 MB)
+- Erro "playwright install" ou "Executable doesn't exist": falta a pasta ms-playwright.
+  Solucao: copie a pasta distribuicao inteira, incluindo ms-playwright\
+- Erro ao iniciar: leia gestao_vagas.log nesta pasta
+- Navegador nao abre: acesse manualmente http://localhost:8501
+- Antivirus bloqueou: permita o programa na primeira execucao
+- Porta em uso: feche outras instancias do programa
+
+REQUISITOS
+----------
+- Windows 10 ou superior
+- Nao precisa instalar Python

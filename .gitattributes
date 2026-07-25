@@ -1,0 +1,5 @@
+*.dll filter=lfs diff=lfs merge=lfs -text
+*.exe filter=lfs diff=lfs merge=lfs -text
+*.node filter=lfs diff=lfs merge=lfs -text
+distribuicao/ms-playwright/** filter=lfs diff=lfs merge=lfs -text
+dist/GestaoVagas/_internal/playwright/** filter=lfs diff=lfs merge=lfs -text
